@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AHEDSMS</string>
+    <string name="channel_name">Gateway status</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="notif_connecting">Connecting to the server…</string>
+    <string name="notif_reconnecting">Connection lost, reconnecting…</string>
+    <string name="notif_connected">Online and ready to send</string>
+
+    <string name="state_connected">Online</string>
+    <string name="state_connecting">Connecting…</string>
+    <string name="state_stopped">Stopped</string>
+    <string name="state_unauthorized">Link expired</string>
+    <string name="state_unauthorized_help">The link is old or this device was removed from the dashboard. Create a new link and pair again.</string>
+    <string name="not_paired">Not linked to an account</string>
+    <string name="start">Start gateway</string>
+    <string name="stop">Stop gateway</string>
+    <string name="queue_pending">%1$d message(s) waiting</string>
+
+    <string name="stats_sent">Sent today</string>
+    <string name="stats_failed">Failed today</string>
+    <string name="stats_received">Received today</string>
+
+    <string name="attention_title">Finish setting up</string>
+    <string name="grant_perms">Grant SMS permissions</string>
+    <string name="battery">Exclude from battery optimization</string>
+
+    <string name="pair_title">Link this phone to your account</string>
+    <string name="pair_help">In the dashboard open "Devices" and tap "Link device", then scan the code.</string>
+    <string name="scan_button">Scan QR code</string>
+    <string name="pair_or">Or paste the pairing link</string>
+    <string name="pair_hint">Pairing link</string>
+    <string name="pair_button">Link</string>
+    <string name="scan_failed">Scan failed, try again or paste the link</string>
+    <string name="pair_invalid">That link is not valid</string>
+    <string name="pair_ok">Linked successfully</string>
+    <string name="need_pair">Link this phone to your account first</string>
+    <string name="need_sms_perm">Without SMS permission the app can\'t send messages</string>
+
+    <string name="log_title">Activity</string>
+    <string name="log_empty">No activity yet</string>
+    <string name="log_clear">Clear</string>
+    <string name="log_connected">Connected to the server</string>
+    <string name="log_stopped">Gateway stopped</string>
+    <string name="log_unauthorized">The server rejected the link (old link or device removed)</string>
+    <string name="log_disconnected">Disconnected: %1$s</string>
+    <string name="log_welcome">Linked as: %1$s</string>
+    <string name="log_sending">Sending to %1$s (%2$d part(s))</string>
+    <string name="log_send_failed">Could not send to %1$s: %2$s</string>
+    <string name="log_sent">Sent ✓</string>
+    <string name="log_failed">Failed: %1$s</string>
+    <string name="log_delivered">Delivered ✓✓</string>
+    <string name="log_incoming">Message received from %1$s</string>
+    <string name="log_paired">Linked with %1$s</string>
+    <string name="log_scan_failed">Scan failed: %1$s</string>
+    <string name="log_bad_server">Invalid server address: %1$s</string>
+    <string name="log_hourly_wait">Hourly limit reached, resuming in %1$d min</string>
+    <string name="log_unlinked">Unlinked</string>
+
+    <string name="pref_cat_sending">Sending</string>
+    <string name="pref_delay">Delay between messages</string>
+    <string name="pref_default_sim">Default SIM</string>
+    <string name="pref_hourly">Maximum per hour</string>
+    <string name="pref_delivery">Delivery reports</string>
+    <string name="pref_delivery_sum">Ask the network to confirm delivery of each message</string>
+    <string name="pref_cat_receiving">Receiving</string>
+    <string name="pref_forward">Forward incoming messages</string>
+    <string name="pref_forward_sum">Send messages this phone receives to the dashboard and webhook</string>
+    <string name="pref_cat_running">Running</string>
+    <string name="pref_boot">Start on boot</string>
+    <string name="pref_boot_sum">Start the gateway automatically when the phone turns on</string>
+    <string name="pref_awake">Keep CPU awake</string>
+    <string name="pref_awake_sum">Stops the phone from dropping the connection while locked. Uses more battery, best on a charger</string>
+    <string name="pref_battery">Battery settings</string>
+    <string name="pref_battery_sum">Make sure the app is excluded from battery optimization</string>
+    <string name="pref_cat_device">Account and device</string>
+    <string name="pref_server">Server</string>
+    <string name="pref_open_dashboard">Open dashboard</string>
+    <string name="pref_open_dashboard_sum">Open your account in the browser</string>
+    <string name="pref_test">Test message</string>
+    <string name="pref_test_sum">Send a message from this phone to check the SIM works</string>
+    <string name="pref_unlink">Unlink</string>
+    <string name="pref_unlink_sum">Disconnect this phone from the account. You can pair again with a new link</string>
+    <string name="pref_cat_about">About</string>
+    <string name="pref_version">Version</string>
+
+    <string name="unlink_title">Unlink this phone?</string>
+    <string name="unlink_msg">The gateway stops and new messages won\'t reach this phone.</string>
+    <string name="test_title">Test message</string>
+    <string name="test_hint">Phone number</string>
+    <string name="test_send">Send</string>
+    <string name="test_body">Test message from AHEDSMS ✓</string>
+    <string name="test_sent">Sent, check the activity log for the result</string>
+</resources>

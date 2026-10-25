@@ -20,32 +20,35 @@ object SmsSender {
     const val ACTION_SENT = "dev.smsgw.gateway.SMS_SENT"
     const val ACTION_DELIVERED = "dev.smsgw.gateway.SMS_DELIVERED"
 
+    /** Sends one message. simSlot null = use the default SIM from settings. */
     fun send(ctx: Context, id: String, to: String, body: String, simSlot: Int?) {
         try {
-            val mgr = manager(ctx, simSlot)
+            val mgr = manager(ctx, simSlot ?: Prefs.defaultSim(ctx))
             val parts = mgr.divideMessage(body)
             if (parts.isEmpty()) parts.add(body)
             SmsTracker.start(id, parts.size)
 
+            val wantReports = Prefs.deliveryReports(ctx)
             val sent = ArrayList<PendingIntent>()
             val delivered = ArrayList<PendingIntent>()
             for (i in parts.indices) {
                 val last = i == parts.lastIndex
                 sent.add(pendingIntent(ctx, ACTION_SENT, id, i, last, mutable = false))
                 // Delivery reports carry the PDU as an extra the system fills in, so that intent must be mutable.
-                delivered.add(pendingIntent(ctx, ACTION_DELIVERED, id, i, last, mutable = true))
+                if (wantReports) delivered.add(pendingIntent(ctx, ACTION_DELIVERED, id, i, last, mutable = true))
             }
 
             if (parts.size == 1) {
-                mgr.sendTextMessage(to, null, parts[0], sent[0], delivered[0])
+                mgr.sendTextMessage(to, null, parts[0], sent[0], if (wantReports) delivered[0] else null)
             } else {
-                mgr.sendMultipartTextMessage(to, null, parts, sent, delivered)
+                mgr.sendMultipartTextMessage(to, null, parts, sent, if (wantReports) delivered else null)
             }
-            AppLog.add("← إرسال إلى $to (${parts.size} جزء)")
+            AppLog.add(ctx.getString(R.string.log_sending, to, parts.size))
         } catch (e: Exception) {
             SmsTracker.clear(id)
             val err = "${e.javaClass.simpleName}: ${e.message ?: ""}".trim()
-            AppLog.add("✗ فشل الإرسال إلى $to: $err")
+            AppLog.add(ctx.getString(R.string.log_send_failed, to, err))
+            Stats.inc(ctx, Stats.FAILED)
             Outbox.status(id, "failed", err)
         }
     }
@@ -127,7 +130,13 @@ class SmsStatusReceiver : BroadcastReceiver() {
             SmsSender.ACTION_SENT -> {
                 val err = if (resultCode == Activity.RESULT_OK) null else SmsSender.errorName(resultCode)
                 val (status, error) = SmsTracker.partResult(id, err) ?: return
-                AppLog.add(if (status == "sent") "✓ انبعتت ($id)" else "✗ فشلت ($id): $error")
+                if (status == "sent") {
+                    Stats.inc(ctx, Stats.SENT)
+                    AppLog.add(ctx.getString(R.string.log_sent))
+                } else {
+                    Stats.inc(ctx, Stats.FAILED)
+                    AppLog.add(ctx.getString(R.string.log_failed, error ?: "?"))
+                }
                 Outbox.status(id, status, error)
             }
             SmsSender.ACTION_DELIVERED -> {
@@ -146,7 +155,7 @@ class SmsStatusReceiver : BroadcastReceiver() {
                 } else if (resultCode != Activity.RESULT_OK) {
                     return
                 }
-                AppLog.add("✓✓ وصلت ($id)")
+                AppLog.add(ctx.getString(R.string.log_delivered))
                 Outbox.status(id, "delivered")
             }
         }
@@ -156,6 +165,7 @@ class SmsStatusReceiver : BroadcastReceiver() {
 class SmsIncomingReceiver : BroadcastReceiver() {
     override fun onReceive(ctx: Context, intent: Intent) {
         if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
+        if (!Prefs.forwardIncoming(ctx) || !Prefs.isPaired(ctx)) return
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent) ?: return
         if (messages.isEmpty()) return
 
@@ -176,7 +186,8 @@ class SmsIncomingReceiver : BroadcastReceiver() {
                 .put("body", body.toString())
                 .put("timestamp", timestamp)
             if (slot >= 0) frame.put("simSlot", slot)
-            AppLog.add("→ رسالة واردة من $from")
+            Stats.inc(ctx, Stats.RECEIVED)
+            AppLog.add(ctx.getString(R.string.log_incoming, from))
             Outbox.push(frame)
         }
     }
@@ -184,7 +195,7 @@ class SmsIncomingReceiver : BroadcastReceiver() {
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(ctx: Context, intent: Intent) {
-        if (Prefs.isEnabled(ctx) && Prefs.isPaired(ctx)) {
+        if (Prefs.startOnBoot(ctx) && Prefs.isEnabled(ctx) && Prefs.isPaired(ctx)) {
             runCatching { GatewayService.start(ctx) }
         }
     }

@@ -20,7 +20,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.DarkActionBar"
+        android:theme="@style/Theme.Gateway"
         android:usesCleartextTraffic="true">
 
         <!-- Download the QR scanner module at install time so the first scan opens instantly. -->
@@ -44,6 +44,11 @@
                 <data android:scheme="smsgw" android:host="pair" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
 
         <service
             android:name=".GatewayService"

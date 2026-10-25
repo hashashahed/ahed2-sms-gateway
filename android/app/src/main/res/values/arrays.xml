@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="delay_entries">
+        <item>ثانية وحدة</item>
+        <item>ثانيتين (موصى فيه)</item>
+        <item>3 ثواني</item>
+        <item>5 ثواني</item>
+        <item>10 ثواني</item>
+    </string-array>
+    <string-array name="delay_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
+
+    <string-array name="sim_entries">
+        <item>تلقائي (شريحة الرسائل الافتراضية)</item>
+        <item>شريحة 1</item>
+        <item>شريحة 2</item>
+    </string-array>
+    <string-array name="sim_values" translatable="false">
+        <item>auto</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="hourly_entries">
+        <item>بلا حد</item>
+        <item>30 رسالة</item>
+        <item>60 رسالة</item>
+        <item>100 رسالة</item>
+        <item>200 رسالة</item>
+        <item>500 رسالة</item>
+    </string-array>
+    <string-array name="hourly_values" translatable="false">
+        <item>0</item>
+        <item>30</item>
+        <item>60</item>
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+    </string-array>
+</resources>

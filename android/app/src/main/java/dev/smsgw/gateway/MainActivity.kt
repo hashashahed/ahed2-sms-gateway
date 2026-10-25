@@ -2,55 +2,93 @@ package dev.smsgw.gateway
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var statusDot: View
     private lateinit var statusText: TextView
-    private lateinit var serverText: TextView
-    private lateinit var pairInput: EditText
-    private lateinit var toggleBtn: Button
-    private lateinit var permBtn: Button
-    private lateinit var batteryBtn: Button
+    private lateinit var statusSub: TextView
+    private lateinit var toggleBtn: MaterialButton
+    private lateinit var statSent: TextView
+    private lateinit var statFailed: TextView
+    private lateinit var statReceived: TextView
+    private lateinit var warnCard: MaterialCardView
+    private lateinit var permBtn: MaterialButton
+    private lateinit var batteryBtn: MaterialButton
+    private lateinit var pairCard: MaterialCardView
+    private lateinit var pairInput: TextInputEditText
     private lateinit var logText: TextView
+
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                toast(getString(R.string.need_sms_perm))
+            }
+            render()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById<MaterialToolbar>(R.id.toolbar))
 
         statusDot = findViewById(R.id.statusDot)
         statusText = findViewById(R.id.statusText)
-        serverText = findViewById(R.id.serverText)
-        pairInput = findViewById(R.id.pairInput)
+        statusSub = findViewById(R.id.statusSub)
         toggleBtn = findViewById(R.id.toggleBtn)
+        statSent = findViewById(R.id.statSent)
+        statFailed = findViewById(R.id.statFailed)
+        statReceived = findViewById(R.id.statReceived)
+        warnCard = findViewById(R.id.warnCard)
         permBtn = findViewById(R.id.permBtn)
         batteryBtn = findViewById(R.id.batteryBtn)
+        pairCard = findViewById(R.id.pairCard)
+        pairInput = findViewById(R.id.pairInput)
         logText = findViewById(R.id.logText)
 
-        findViewById<Button>(R.id.pairBtn).setOnClickListener { applyPairing(pairInput.text.toString()) }
-        findViewById<Button>(R.id.scanBtn).setOnClickListener { scanQr() }
         toggleBtn.setOnClickListener { toggle() }
         permBtn.setOnClickListener { requestNeededPermissions() }
         batteryBtn.setOnClickListener { askBatteryExemption() }
+        findViewById<MaterialButton>(R.id.scanBtn).setOnClickListener { scanQr() }
+        findViewById<MaterialButton>(R.id.pairBtn).setOnClickListener { applyPairing(pairInput.text?.toString().orEmpty()) }
+        findViewById<MaterialButton>(R.id.clearLogBtn).setOnClickListener { AppLog.clear() }
 
         handleIntent(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_settings) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -61,8 +99,8 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        GatewayService.stateListener = { s -> runOnUiThread { renderState(s) } }
-        AppLog.listener = { runOnUiThread { logText.text = AppLog.text() } }
+        GatewayService.stateListener = { runOnUiThread { render() } }
+        AppLog.listener = { runOnUiThread { renderLogAndStats() } }
         render()
     }
 
@@ -115,7 +153,7 @@ class MainActivity : Activity() {
                 if (value.isNullOrBlank()) toast(getString(R.string.pair_invalid)) else applyPairing(value)
             }
             .addOnFailureListener { e ->
-                AppLog.add("فشل المسح: ${e.message}")
+                AppLog.add(getString(R.string.log_scan_failed, e.message ?: ""))
                 toast(getString(R.string.scan_failed))
             }
     }
@@ -129,7 +167,7 @@ class MainActivity : Activity() {
         val (server, token) = parsed
         Prefs.savePairing(this, server, token)
         pairInput.setText("")
-        AppLog.add("تم حفظ الربط مع $server")
+        AppLog.add(getString(R.string.log_paired, hostOf(server)))
         toast(getString(R.string.pair_ok))
 
         requestNeededPermissions()
@@ -142,8 +180,7 @@ class MainActivity : Activity() {
     // ---------- start / stop ----------
 
     private fun toggle() {
-        val running = GatewayService.instance != null
-        if (running) {
+        if (GatewayService.instance != null) {
             GatewayService.stop(this)
         } else {
             if (!Prefs.isPaired(this)) {
@@ -170,15 +207,7 @@ class MainActivity : Activity() {
 
     private fun requestNeededPermissions() {
         val missing = neededPermissions()
-        if (missing.isNotEmpty()) requestPermissions(missing.toTypedArray(), 1)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            toast(getString(R.string.need_sms_perm))
-        }
-        render()
+        if (missing.isNotEmpty()) permissionLauncher.launch(missing.toTypedArray())
     }
 
     private fun isBatteryExempt(): Boolean =
@@ -187,9 +216,7 @@ class MainActivity : Activity() {
     @SuppressLint("BatteryLife")
     private fun askBatteryExemption() {
         try {
-            startActivity(
-                Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
-            )
+            startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName")))
         } catch (e: Exception) {
             startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
         }
@@ -197,27 +224,57 @@ class MainActivity : Activity() {
 
     // ---------- UI ----------
 
+    private fun hostOf(server: String): String = Uri.parse(server).host ?: server
+
     private fun render() {
-        serverText.text = if (Prefs.isPaired(this)) Prefs.server(this) else getString(R.string.not_paired)
-        permBtn.visibility = if (neededPermissions().isEmpty()) View.GONE else View.VISIBLE
-        batteryBtn.visibility = if (isBatteryExempt()) View.GONE else View.VISIBLE
-        logText.text = AppLog.text().ifEmpty { getString(R.string.log_empty) }
-        renderState(if (GatewayService.instance == null && GatewayService.state != GatewayService.STATE_UNAUTHORIZED)
-            GatewayService.STATE_STOPPED else GatewayService.state)
+        val paired = Prefs.isPaired(this)
+        pairCard.visibility = if (paired) View.GONE else View.VISIBLE
+
+        val needPerms = neededPermissions().isNotEmpty()
+        val needBattery = !isBatteryExempt()
+        permBtn.visibility = if (needPerms) View.VISIBLE else View.GONE
+        batteryBtn.visibility = if (needBattery) View.VISIBLE else View.GONE
+        warnCard.visibility = if (needPerms || needBattery) View.VISIBLE else View.GONE
+
+        val running = GatewayService.instance != null
+        val s = when {
+            !paired -> GatewayService.STATE_UNPAIRED
+            GatewayService.state == GatewayService.STATE_UNAUTHORIZED && !running -> GatewayService.STATE_UNAUTHORIZED
+            !running -> GatewayService.STATE_STOPPED
+            else -> GatewayService.state
+        }
+        val (label, colorRes) = when (s) {
+            GatewayService.STATE_CONNECTED -> R.string.state_connected to R.color.status_ok
+            GatewayService.STATE_CONNECTING -> R.string.state_connecting to R.color.status_warn
+            GatewayService.STATE_UNAUTHORIZED -> R.string.state_unauthorized to R.color.status_bad
+            GatewayService.STATE_UNPAIRED -> R.string.not_paired to R.color.status_off
+            else -> R.string.state_stopped to R.color.status_off
+        }
+        statusText.setText(label)
+        statusDot.background.mutate().setTint(ContextCompat.getColor(this, colorRes))
+
+        val sub = mutableListOf<String>()
+        if (s == GatewayService.STATE_UNAUTHORIZED) {
+            sub.add(getString(R.string.state_unauthorized_help))
+        } else if (paired) {
+            val name = Prefs.deviceName(this)
+            sub.add(if (name.isNotBlank()) "$name · ${hostOf(Prefs.server(this))}" else hostOf(Prefs.server(this)))
+            val q = GatewayService.queued.get()
+            if (running && q > 0) sub.add(getString(R.string.queue_pending, q))
+        }
+        statusSub.text = sub.joinToString("\n")
+        statusSub.visibility = if (sub.isEmpty()) View.GONE else View.VISIBLE
+
+        toggleBtn.setText(if (running) R.string.stop else R.string.start)
+        toggleBtn.isEnabled = paired
+        renderLogAndStats()
     }
 
-    private fun renderState(s: String) {
-        val (label, color) = when (s) {
-            GatewayService.STATE_CONNECTED -> getString(R.string.state_connected) to "#0F7A5A"
-            GatewayService.STATE_CONNECTING -> getString(R.string.state_connecting) to "#C08A00"
-            GatewayService.STATE_UNAUTHORIZED -> getString(R.string.state_unauthorized) to "#B3261E"
-            GatewayService.STATE_UNPAIRED -> getString(R.string.not_paired) to "#888888"
-            else -> getString(R.string.state_stopped) to "#888888"
-        }
-        statusText.text = label
-        statusDot.background.mutate().setTint(Color.parseColor(color))
-        val running = s == GatewayService.STATE_CONNECTED || s == GatewayService.STATE_CONNECTING
-        toggleBtn.text = getString(if (running) R.string.stop else R.string.start)
+    private fun renderLogAndStats() {
+        statSent.text = Stats.get(this, Stats.SENT).toString()
+        statFailed.text = Stats.get(this, Stats.FAILED).toString()
+        statReceived.text = Stats.get(this, Stats.RECEIVED).toString()
+        logText.text = AppLog.text().ifEmpty { getString(R.string.log_empty) }
     }
 
     private fun toast(t: String) = Toast.makeText(this, t, Toast.LENGTH_LONG).show()

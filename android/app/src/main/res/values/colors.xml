@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="launcher_bg">#0F7A5A</color>
+    <color name="brand">#0F7A5A</color>
+    <color name="brand_dark">#0A5A42</color>
+    <color name="brand_container">#CDEFE0</color>
+    <color name="on_brand_container">#002116</color>
+    <color name="status_ok">#1E9E6E</color>
+    <color name="status_warn">#C08A00</color>
+    <color name="status_bad">#C2362C</color>
+    <color name="status_off">#8A8F8C</color>
 </resources>

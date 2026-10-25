@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Gateway" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_brand_container</item>
+        <item name="colorSecondaryContainer">@color/brand_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_brand_container</item>
+        <item name="android:statusBarColor">@color/brand_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Green app bar with white title and icons. -->
+    <style name="Widget.Gateway.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/brand</item>
+        <item name="titleTextColor">#FFFFFF</item>
+        <item name="subtitleTextColor">#D8F2E7</item>
+    </style>
+
+    <style name="Widget.Gateway.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+</resources>

@@ -1,36 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">بوابة الرسائل</string>
+    <string name="app_name">AHEDSMS</string>
     <string name="channel_name">حالة البوابة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="cancel">إلغاء</string>
 
+    <!-- Notification -->
     <string name="notif_connecting">جاري الاتصال بالسيرفر…</string>
     <string name="notif_reconnecting">انقطع الاتصال، بنحاول نرجع…</string>
     <string name="notif_connected">متصل وجاهز لإرسال الرسائل</string>
 
-    <string name="state_connected">متصل ✓</string>
+    <!-- Status -->
+    <string name="state_connected">متصل</string>
     <string name="state_connecting">جاري الاتصال…</string>
     <string name="state_stopped">متوقف</string>
-    <string name="state_unauthorized">الربط مش صالح، اعمل رابط جديد من لوحة التحكم</string>
-    <string name="not_paired">مش مربوط بسيرفر</string>
+    <string name="state_unauthorized">الربط مش صالح</string>
+    <string name="state_unauthorized_help">الرابط قديم أو الجهاز انحذف من لوحة التحكم. اعمل رابط جديد واربط مرة ثانية.</string>
+    <string name="not_paired">مش مربوط بحساب</string>
+    <string name="start">تشغيل البوابة</string>
+    <string name="stop">إيقاف البوابة</string>
+    <string name="queue_pending">%1$d رسالة بالانتظار</string>
 
-    <string name="start">تشغيل</string>
-    <string name="stop">إيقاف</string>
-    <string name="grant_perms">منح الصلاحيات</string>
+    <!-- Stats -->
+    <string name="stats_sent">انبعتت اليوم</string>
+    <string name="stats_failed">فشلت اليوم</string>
+    <string name="stats_received">واردة اليوم</string>
+
+    <!-- Attention -->
+    <string name="attention_title">خطوات لازم تكملها</string>
+    <string name="grant_perms">منح صلاحيات الرسائل</string>
     <string name="battery">استثناء التطبيق من توفير البطارية</string>
 
-    <string name="pair_title">الربط</string>
-    <string name="pair_help">اضغط "مسح كود QR" ووجّه الكاميرا على الكود اللي بلوحة التحكم، أو الصق رابط الربط هون.</string>
-    <string name="pair_button">ربط بالرابط</string>
-    <string name="scan_button">📷 مسح كود QR</string>
+    <!-- Pairing -->
+    <string name="pair_title">اربط الجوال بحسابك</string>
+    <string name="pair_help">من لوحة التحكم بالموقع افتح "الأجهزة" واضغط "ربط جهاز"، وبعدين امسح الكود.</string>
+    <string name="scan_button">مسح كود QR</string>
+    <string name="pair_or">أو الصق رابط الربط</string>
+    <string name="pair_hint">رابط الربط</string>
+    <string name="pair_button">ربط</string>
     <string name="scan_failed">ما زبط المسح، جرّب مرة ثانية أو الصق الرابط</string>
     <string name="pair_invalid">الرابط مش صحيح</string>
-    <string name="pair_ok">تم الربط</string>
-    <string name="need_pair">اربط الجوال بالسيرفر أول</string>
-    <string name="need_sms_perm">بدون صلاحية إرسال الرسائل التطبيق ما بيقدر يبعت</string>
+    <string name="pair_ok">تم الربط بنجاح</string>
+    <string name="need_pair">اربط الجوال بحسابك أول</string>
+    <string name="need_sms_perm">بدون صلاحية الرسائل التطبيق ما بيقدر يبعت</string>
 
-    <string name="log_title">السجل</string>
+    <!-- Log -->
+    <string name="log_title">سجل النشاط</string>
     <string name="log_empty">ما في نشاط لسا</string>
+    <string name="log_clear">مسح</string>
     <string name="log_connected">اتصلنا بالسيرفر</string>
     <string name="log_stopped">البوابة توقفت</string>
     <string name="log_unauthorized">السيرفر رفض الربط (الرابط قديم أو الجهاز انحذف)</string>
+    <string name="log_disconnected">انقطع الاتصال: %1$s</string>
+    <string name="log_welcome">مربوط باسم: %1$s</string>
+    <string name="log_sending">إرسال إلى %1$s (%2$d جزء)</string>
+    <string name="log_send_failed">فشل الإرسال إلى %1$s: %2$s</string>
+    <string name="log_sent">انبعتت ✓</string>
+    <string name="log_failed">فشلت: %1$s</string>
+    <string name="log_delivered">وصلت ✓✓</string>
+    <string name="log_incoming">رسالة واردة من %1$s</string>
+    <string name="log_paired">تم الربط مع %1$s</string>
+    <string name="log_scan_failed">فشل المسح: %1$s</string>
+    <string name="log_bad_server">رابط السيرفر غير صالح: %1$s</string>
+    <string name="log_hourly_wait">وصلنا حد الإرسال بالساعة، بنكمل بعد %1$d دقيقة</string>
+    <string name="log_unlinked">تم فك الربط</string>
+
+    <!-- Settings -->
+    <string name="pref_cat_sending">الإرسال</string>
+    <string name="pref_delay">المدة بين كل رسالة</string>
+    <string name="pref_default_sim">الشريحة الافتراضية</string>
+    <string name="pref_hourly">الحد الأعلى بالساعة</string>
+    <string name="pref_delivery">تقارير الوصول</string>
+    <string name="pref_delivery_sum">اطلب تأكيد وصول من الشبكة لكل رسالة</string>
+    <string name="pref_cat_receiving">الاستقبال</string>
+    <string name="pref_forward">تحويل الرسائل الواردة</string>
+    <string name="pref_forward_sum">ابعت الرسائل اللي بتوصل الجوال للوحة التحكم والـ Webhook</string>
+    <string name="pref_cat_running">التشغيل</string>
+    <string name="pref_boot">التشغيل التلقائي</string>
+    <string name="pref_boot_sum">شغّل البوابة لحالها لما الجوال يشتغل</string>
+    <string name="pref_awake">إبقاء المعالج شغال</string>
+    <string name="pref_awake_sum">بيمنع الجوال يوقف الاتصال وهو مقفول. بيصرف بطارية أكثر، الأفضل يكون على الشاحن</string>
+    <string name="pref_battery">إعدادات البطارية</string>
+    <string name="pref_battery_sum">تأكد إن التطبيق مستثنى من توفير البطارية</string>
+    <string name="pref_cat_device">الحساب والجهاز</string>
+    <string name="pref_server">السيرفر</string>
+    <string name="pref_open_dashboard">فتح لوحة التحكم</string>
+    <string name="pref_open_dashboard_sum">افتح حسابك بالمتصفح</string>
+    <string name="pref_test">رسالة تجريبية</string>
+    <string name="pref_test_sum">ابعت رسالة من هاد الجوال لتتأكد إن الشريحة شغالة</string>
+    <string name="pref_unlink">فك الربط</string>
+    <string name="pref_unlink_sum">افصل الجوال عن الحساب. بتقدر تربطه مرة ثانية برابط جديد</string>
+    <string name="pref_cat_about">حول التطبيق</string>
+    <string name="pref_version">الإصدار</string>
+
+    <string name="unlink_title">فك ربط الجوال؟</string>
+    <string name="unlink_msg">البوابة رح توقف، والرسائل الجديدة ما رح توصل لهاد الجوال.</string>
+    <string name="test_title">رسالة تجريبية</string>
+    <string name="test_hint">رقم الجوال</string>
+    <string name="test_send">إرسال</string>
+    <string name="test_body">رسالة تجريبية من AHEDSMS ✓</string>
+    <string name="test_sent">انبعتت، تابع النتيجة بسجل النشاط</string>
 </resources>

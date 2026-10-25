@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/pref_cat_sending" app:iconSpaceReserved="false">
+        <ListPreference
+            app:key="delay_s"
+            app:title="@string/pref_delay"
+            app:entries="@array/delay_entries"
+            app:entryValues="@array/delay_values"
+            app:defaultValue="2"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            app:key="default_sim"
+            app:title="@string/pref_default_sim"
+            app:entries="@array/sim_entries"
+            app:entryValues="@array/sim_values"
+            app:defaultValue="auto"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            app:key="hourly_limit"
+            app:title="@string/pref_hourly"
+            app:entries="@array/hourly_entries"
+            app:entryValues="@array/hourly_values"
+            app:defaultValue="0"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="delivery_reports"
+            app:title="@string/pref_delivery"
+            app:summary="@string/pref_delivery_sum"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_receiving" app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:key="forward_incoming"
+            app:title="@string/pref_forward"
+            app:summary="@string/pref_forward_sum"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_running" app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:key="start_on_boot"
+            app:title="@string/pref_boot"
+            app:summary="@string/pref_boot_sum"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="keep_awake"
+            app:title="@string/pref_awake"
+            app:summary="@string/pref_awake_sum"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <Preference
+            app:key="battery"
+            app:title="@string/pref_battery"
+            app:summary="@string/pref_battery_sum"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_device" app:iconSpaceReserved="false">
+        <Preference
+            app:key="server_info"
+            app:title="@string/pref_server"
+            app:selectable="false"
+            app:iconSpaceReserved="false" />
+        <Preference
+            app:key="open_dashboard"
+            app:title="@string/pref_open_dashboard"
+            app:summary="@string/pref_open_dashboard_sum"
+            app:iconSpaceReserved="false" />
+        <Preference
+            app:key="test_sms"
+            app:title="@string/pref_test"
+            app:summary="@string/pref_test_sum"
+            app:iconSpaceReserved="false" />
+        <Preference
+            app:key="unlink"
+            app:title="@string/pref_unlink"
+            app:summary="@string/pref_unlink_sum"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_about" app:iconSpaceReserved="false">
+        <Preference
+            app:key="version"
+            app:title="@string/pref_version"
+            app:selectable="false"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+</PreferenceScreen>
