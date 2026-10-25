@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">بوابة الرسائل</string>
+    <string name="channel_name">حالة البوابة</string>
+
+    <string name="notif_connecting">جاري الاتصال بالسيرفر…</string>
+    <string name="notif_reconnecting">انقطع الاتصال، بنحاول نرجع…</string>
+    <string name="notif_connected">متصل وجاهز لإرسال الرسائل</string>
+
+    <string name="state_connected">متصل ✓</string>
+    <string name="state_connecting">جاري الاتصال…</string>
+    <string name="state_stopped">متوقف</string>
+    <string name="state_unauthorized">الربط مش صالح، اعمل رابط جديد من لوحة التحكم</string>
+    <string name="not_paired">مش مربوط بسيرفر</string>
+
+    <string name="start">تشغيل</string>
+    <string name="stop">إيقاف</string>
+    <string name="grant_perms">منح الصلاحيات</string>
+    <string name="battery">استثناء التطبيق من توفير البطارية</string>
+
+    <string name="pair_title">الربط</string>
+    <string name="pair_help">امسح كود QR من لوحة التحكم بكاميرا الجوال، أو الصق رابط الربط هون.</string>
+    <string name="pair_button">ربط</string>
+    <string name="pair_invalid">الرابط مش صحيح</string>
+    <string name="pair_ok">تم الربط</string>
+    <string name="need_pair">اربط الجوال بالسيرفر أول</string>
+    <string name="need_sms_perm">بدون صلاحية إرسال الرسائل التطبيق ما بيقدر يبعت</string>
+
+    <string name="log_title">السجل</string>
+    <string name="log_empty">ما في نشاط لسا</string>
+    <string name="log_connected">اتصلنا بالسيرفر</string>
+    <string name="log_stopped">البوابة توقفت</string>
+    <string name="log_unauthorized">السيرفر رفض الربط (الرابط قديم أو الجهاز انحذف)</string>
+</resources>

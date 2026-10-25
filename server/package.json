@@ -1,0 +1,17 @@
+{
+  "name": "sms-gateway-server",
+  "version": "1.0.0",
+  "description": "Lightweight SMS gateway: send SMS through your own Android phone via a simple HTTP API",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node --no-warnings=ExperimentalWarning src/server.js",
+    "test": "node --no-warnings=ExperimentalWarning test/test.js"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

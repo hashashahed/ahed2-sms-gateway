@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ربط الجهاز</title>
+<style>
+  :root { --bg:#f5f6f4; --card:#fff; --ink:#1d2320; --muted:#66706b; --accent:#0f7a5a; --accent-ink:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#121614; --card:#1b201d; --ink:#e8ece9; --muted:#98a29d; --accent:#3fbf8f; --accent-ink:#0d1411; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, Tahoma, sans-serif; display:grid; place-items:center; min-height:100vh; padding:16px; box-sizing:border-box; }
+  .card { background:var(--card); border-radius:14px; padding:24px; max-width:420px; width:100%; text-align:center; }
+  a.btn { display:block; background:var(--accent); color:var(--accent-ink); text-decoration:none; padding:14px; border-radius:10px; font-weight:700; margin:18px 0 10px; }
+  p { color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 style="font-size:20px">ربط هذا الجوال</h1>
+  <p>تأكد إنك منزّل تطبيق بوابة الرسائل، وبعدين اضغط الزر.</p>
+  <a id="open" class="btn" href="#">افتح التطبيق واربط</a>
+  <p id="err" hidden>الرابط ناقص. ارجع للوحة التحكم واعمل رابط جديد.</p>
+</div>
+<script>
+  const token = decodeURIComponent(location.hash.slice(1));
+  if (!token) { document.getElementById('err').hidden = false; document.getElementById('open').hidden = true; }
+  else {
+    const q = 'server=' + encodeURIComponent(location.origin) + '&token=' + encodeURIComponent(token);
+    const isAndroidChrome = /Android/i.test(navigator.userAgent);
+    document.getElementById('open').href = isAndroidChrome
+      ? 'intent://pair?' + q + '#Intent;scheme=smsgw;package=dev.smsgw.gateway;end'
+      : 'smsgw://pair?' + q;
+  }
+</script>
+</body>
+</html>

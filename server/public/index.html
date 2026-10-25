@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بوابة الرسائل</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f6f4; --card: #ffffff; --ink: #1d2320; --muted: #66706b; --line: #e2e5e1;
+    --accent: #0f7a5a; --accent-ink: #ffffff; --danger: #b3261e; --warn: #9a6400; --ok: #0f7a5a;
+    --code: #eef1ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121614; --card: #1b201d; --ink: #e8ece9; --muted: #98a29d; --line: #2c332f;
+      --accent: #3fbf8f; --accent-ink: #0d1411; --danger: #f2827a; --warn: #e0b45a; --ok: #3fbf8f;
+      --code: #232a26;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 64px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  h1 { font-size: 22px; margin: 0; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  input, textarea, select { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
+  textarea { min-height: 80px; resize: vertical; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+  button { font: inherit; border: 0; border-radius: 8px; padding: 9px 14px; cursor: pointer; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--line); font-weight: 500; padding: 5px 10px; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .list li:first-child { border-top: 0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: var(--muted); margin-inline-end: 6px; }
+  .dot.on { background: var(--ok); }
+  code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--code); border-radius: 6px; direction: ltr; text-align: left; }
+  code { padding: 2px 6px; word-break: break-all; }
+  pre { padding: 12px; overflow-x: auto; margin: 8px 0 0; }
+  .secret { background: var(--code); border: 1px dashed var(--accent); border-radius: 8px; padding: 12px; margin-top: 12px; }
+  .secret code { display: block; padding: 6px 8px; margin: 6px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: right; padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 13px; border-top: 0; }
+  td.msg { max-width: 320px; white-space: pre-wrap; word-break: break-word; }
+  .tablewrap { overflow-x: auto; }
+  .pill { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); white-space: nowrap; }
+  .s-delivered, .s-sent { color: var(--ok); border-color: var(--ok); }
+  .s-failed { color: var(--danger); border-color: var(--danger); }
+  .s-queued, .s-dispatched, .s-accepted { color: var(--warn); border-color: var(--warn); }
+  .s-received { color: var(--accent); }
+  #qr { background: #fff; padding: 10px; display: inline-block; border-radius: 8px; margin-top: 8px; }
+  .hidden { display: none !important; }
+  .toast { position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 420px; margin: 0 auto; background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+  .ltr { direction: ltr; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>بوابة الرسائل</h1>
+    <button id="logout" class="ghost hidden">خروج</button>
+  </header>
+
+  <section id="login" class="card" style="max-width:440px">
+    <h2>تسجيل الدخول</h2>
+    <p class="muted">أدخل مفتاح الإدارة اللي ظهر في سجل السيرفر عند التشغيل (أو قيمة ADMIN_KEY).</p>
+    <input id="adminKey" class="ltr" placeholder="admin_..." autocomplete="current-password">
+    <div class="row" style="margin-top:12px"><button id="loginBtn">دخول</button></div>
+  </section>
+
+  <main id="app" class="hidden">
+    <div class="grid">
+      <section class="card">
+        <div class="row" style="justify-content:space-between"><h2>الأجهزة</h2><button id="addDevice" class="ghost">+ ربط جهاز</button></div>
+        <ul id="devices" class="list"></ul>
+        <div id="pairBox" class="secret hidden">
+          <strong>ربط الجهاز</strong>
+          <p class="muted" style="margin:4px 0">امسح الكود بكاميرا الجوال، أو انسخ الرابط والصقه في التطبيق. الرابط بيظهر مرة وحدة بس.</p>
+          <div id="qr"></div>
+          <code id="pairLink"></code>
+          <button id="copyPair" class="ghost">نسخ الرابط</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="row" style="justify-content:space-between"><h2>مفاتيح API</h2><button id="addKey" class="ghost">+ مفتاح جديد</button></div>
+        <ul id="keys" class="list"></ul>
+        <div id="keyBox" class="secret hidden">
+          <strong>مفتاحك الجديد</strong>
+          <p class="muted" style="margin:4px 0">احفظه هلأ، ما رح يظهر مرة ثانية.</p>
+          <code id="newKey"></code>
+          <button id="copyKey" class="ghost">نسخ</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>إرسال رسالة تجريبية</h2>
+      <div class="grid">
+        <div>
+          <label>الرقم (أو أكثر من رقم مفصولين بفاصلة)</label>
+          <input id="to" class="ltr" placeholder="+970599000000">
+          <div class="row" style="gap:12px">
+            <div style="flex:1"><label>الجهاز</label><select id="deviceSel"></select></div>
+            <div style="flex:1"><label>الشريحة</label>
+              <select id="simSel"><option value="">الافتراضية</option><option value="0">شريحة 1</option><option value="1">شريحة 2</option></select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>نص الرسالة</label>
+          <textarea id="body" placeholder="مرحبا!"></textarea>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px"><button id="sendBtn">إرسال</button><span id="sendInfo" class="muted"></span></div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2>الرسائل</h2>
+        <select id="dirSel" style="width:auto"><option value="">الكل</option><option value="out">الصادرة</option><option value="in">الواردة</option></select>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th></th><th>الرقم</th><th>الرسالة</th><th>الحالة</th><th>الوقت</th></tr></thead>
+          <tbody id="msgs"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>استخدام الـ API</h2>
+      <p class="muted">أرسل رسالة:</p>
+      <pre id="curlSend"></pre>
+      <p class="muted" style="margin-top:14px">استعلم عن حالة رسالة (queued → dispatched → accepted → sent → delivered، أو failed):</p>
+      <pre id="curlStatus"></pre>
+      <p class="muted" style="margin-top:14px">حقول اختيارية في الإرسال: <code>deviceId</code> لاختيار جهاز معين، <code>simSlot</code> = 0 أو 1 للجوالات ثنائية الشريحة. <code>to</code> بيقبل رقم أو مصفوفة لغاية 100 رقم.</p>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const store = {
+  get() { try { return localStorage.getItem('adminKey') || ''; } catch { return ''; } },
+  set(v) { try { v ? localStorage.setItem('adminKey', v) : localStorage.removeItem('adminKey'); } catch {} },
+};
+let adminKey = store.get();
+let devices = [];
+
+function toast(t) {
+  const el = $('toast'); el.textContent = t; el.classList.remove('hidden');
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.add('hidden'), 3500);
+}
+async function api(method, path, body) {
+  const r = await fetch(path, {
+    method, headers: { 'x-admin-key': adminKey, ...(body ? { 'content-type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await r.json().catch(() => ({}));
+  if (r.status === 401) { logout(); throw new Error('مفتاح الإدارة غير صحيح'); }
+  if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+  return data;
+}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const when = (t) => t ? new Date(t).toLocaleString('ar', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+const STATUS = { queued: 'بالانتظار', dispatched: 'أُرسلت للجهاز', accepted: 'الجهاز استلمها', sent: 'انبعتت', delivered: 'وصلت', failed: 'فشلت', received: 'واردة' };
+
+function logout() { adminKey = ''; store.set(''); show(false); }
+function show(loggedIn) {
+  $('login').classList.toggle('hidden', loggedIn);
+  $('app').classList.toggle('hidden', !loggedIn);
+  $('logout').classList.toggle('hidden', !loggedIn);
+}
+
+async function loadOverview() {
+  const o = await api('GET', '/admin/overview');
+  devices = o.devices;
+  $('devices').innerHTML = devices.length ? devices.map((d) => `
+    <li>
+      <div><span class="dot ${d.online ? 'on' : ''}"></span><strong>${esc(d.name)}</strong>
+        <div class="muted">${d.online ? 'متصل' : 'آخر ظهور: ' + when(d.lastSeen)}${d.info?.model ? ' · ' + esc(d.info.model) : ''} · <code>${esc(d.id)}</code></div></div>
+      <div class="row"><button class="ghost" data-repair="${esc(d.id)}">رابط جديد</button><button class="danger" data-deldev="${esc(d.id)}">حذف</button></div>
+    </li>`).join('') : '<li class="muted">ما في أجهزة لسا. اضغط "ربط جهاز".</li>';
+
+  $('keys').innerHTML = o.apiKeys.length ? o.apiKeys.map((k) => `
+    <li><div><strong>${esc(k.name)}</strong><div class="muted"><code>${esc(k.prefix)}…</code> · آخر استخدام: ${when(k.last_used)}</div></div>
+      <button class="danger" data-delkey="${esc(k.id)}">حذف</button></li>`).join('')
+    : '<li class="muted">ما في مفاتيح. أنشئ مفتاح عشان تستخدم الـ API من برامجك.</li>';
+
+  const sel = $('deviceSel'); const cur = sel.value;
+  sel.innerHTML = '<option value="">تلقائي (أول جهاز متصل)</option>' +
+    devices.map((d) => `<option value="${esc(d.id)}">${esc(d.name)}${d.online ? '' : ' (غير متصل)'}</option>`).join('');
+  sel.value = cur;
+}
+
+async function loadMessages() {
+  const dir = $('dirSel').value;
+  const { messages } = await api('GET', '/api/v1/sms?limit=50' + (dir ? '&direction=' + dir : ''));
+  $('msgs').innerHTML = messages.length ? messages.map((m) => `
+    <tr>
+      <td>${m.direction === 'in' ? '⬇' : '⬆'}</td>
+      <td class="ltr"><code>${esc(m.phone)}</code></td>
+      <td class="msg">${esc(m.message)}${m.error ? `<div class="muted" style="color:var(--danger)">${esc(m.error)}</div>` : ''}</td>
+      <td><span class="pill s-${esc(m.status)}">${esc(STATUS[m.status] || m.status)}</span></td>
+      <td class="muted">${when(m.createdAt)}</td>
+    </tr>`).join('') : '<tr><td colspan="5" class="muted">ما في رسائل لسا.</td></tr>';
+}
+
+async function refresh() {
+  if (!adminKey) return;
+  try { await Promise.all([loadOverview(), loadMessages()]); } catch (e) { toast(e.message); }
+}
+
+function showPair(token) {
+  const link = `${location.origin}/pair#${token}`;
+  $('pairBox').classList.remove('hidden');
+  $('pairLink').textContent = link;
+  $('qr').innerHTML = '';
+  if (window.QRCode) new QRCode($('qr'), { text: link, width: 200, height: 200 });
+  else $('qr').classList.add('hidden');
+}
+
+function renderDocs() {
+  const base = location.origin;
+  $('curlSend').textContent =
+`curl -X POST ${base}/api/v1/sms/send \\
+  -H "x-api-key: YOUR_API_KEY" \\
+  -H "content-type: application/json" \\
+  -d '{"to": "+970599000000", "message": "مرحبا من الـ API"}'`;
+  $('curlStatus').textContent =
+`curl ${base}/api/v1/sms/MESSAGE_ID -H "x-api-key: YOUR_API_KEY"`;
+}
+
+$('loginBtn').onclick = async () => {
+  adminKey = $('adminKey').value.trim();
+  try { await api('GET', '/admin/overview'); store.set(adminKey); show(true); refresh(); }
+  catch (e) { toast(e.message); }
+};
+$('adminKey').onkeydown = (e) => { if (e.key === 'Enter') $('loginBtn').click(); };
+$('logout').onclick = logout;
+
+$('addDevice').onclick = async () => {
+  const name = prompt('اسم الجهاز:', 'جوالي');
+  if (name === null) return;
+  try { const d = await api('POST', '/admin/devices', { name }); showPair(d.token); refresh(); }
+  catch (e) { toast(e.message); }
+};
+$('addKey').onclick = async () => {
+  const name = prompt('اسم المفتاح (مثلاً اسم موقعك):', 'my-app');
+  if (name === null) return;
+  try {
+    const k = await api('POST', '/admin/keys', { name });
+    $('keyBox').classList.remove('hidden'); $('newKey').textContent = k.key; refresh();
+  } catch (e) { toast(e.message); }
+};
+
+document.addEventListener('click', async (e) => {
+  const t = e.target.closest('button'); if (!t) return;
+  try {
+    if (t.dataset.deldev && confirm('حذف الجهاز؟ رح ينفصل فوراً.')) { await api('DELETE', '/admin/devices/' + t.dataset.deldev); refresh(); }
+    if (t.dataset.delkey && confirm('حذف المفتاح؟ أي برنامج بيستخدمه رح يوقف.')) { await api('DELETE', '/admin/keys/' + t.dataset.delkey); refresh(); }
+    if (t.dataset.repair && confirm('إنشاء رابط ربط جديد؟ الرابط القديم رح يبطل.')) {
+      const r = await api('POST', `/admin/devices/${t.dataset.repair}/token`); showPair(r.token); refresh();
+    }
+  } catch (err) { toast(err.message); }
+});
+
+const copy = (id) => navigator.clipboard?.writeText($(id).textContent).then(() => toast('انسخ ✓'), () => toast('ما زبط النسخ، انسخه يدوياً'));
+$('copyPair').onclick = () => copy('pairLink');
+$('copyKey').onclick = () => copy('newKey');
+$('dirSel').onchange = () => loadMessages().catch((e) => toast(e.message));
+
+$('sendBtn').onclick = async () => {
+  const to = $('to').value.split(/[,،\n]/).map((s) => s.trim()).filter(Boolean);
+  const body = { to, message: $('body').value };
+  if ($('deviceSel').value) body.deviceId = $('deviceSel').value;
+  if ($('simSel').value !== '') body.simSlot = Number($('simSel').value);
+  $('sendBtn').disabled = true;
+  try {
+    const r = await api('POST', '/api/v1/sms/send', body);
+    $('sendInfo').textContent = r.deviceOnline ? `انضافت ${r.messages.length} رسالة وانبعتت للجهاز` : 'الجهاز مش متصل، الرسالة بتنتظر لحد ما يتصل';
+    $('body').value = '';
+    loadMessages();
+  } catch (e) { toast(e.message); }
+  finally { $('sendBtn').disabled = false; }
+};
+
+renderDocs();
+if (adminKey) { show(true); refresh(); }
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>
