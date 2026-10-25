@@ -16,6 +16,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 
 class MainActivity : Activity() {
 
@@ -42,6 +45,7 @@ class MainActivity : Activity() {
         logText = findViewById(R.id.logText)
 
         findViewById<Button>(R.id.pairBtn).setOnClickListener { applyPairing(pairInput.text.toString()) }
+        findViewById<Button>(R.id.scanBtn).setOnClickListener { scanQr() }
         toggleBtn.setOnClickListener { toggle() }
         permBtn.setOnClickListener { requestNeededPermissions() }
         batteryBtn.setOnClickListener { askBatteryExemption() }
@@ -97,6 +101,23 @@ class MainActivity : Activity() {
             }
             else -> null
         }
+    }
+
+    /** Opens Google's built-in QR scanner (no camera permission needed) and pairs with what it reads. */
+    private fun scanQr() {
+        val options = GmsBarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+            .build()
+        GmsBarcodeScanning.getClient(this, options)
+            .startScan()
+            .addOnSuccessListener { code ->
+                val value = code.rawValue
+                if (value.isNullOrBlank()) toast(getString(R.string.pair_invalid)) else applyPairing(value)
+            }
+            .addOnFailureListener { e ->
+                AppLog.add("فشل المسح: ${e.message}")
+                toast(getString(R.string.scan_failed))
+            }
     }
 
     private fun applyPairing(raw: String) {

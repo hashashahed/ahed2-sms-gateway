@@ -19,8 +19,10 @@
     <string name="battery">استثناء التطبيق من توفير البطارية</string>
 
     <string name="pair_title">الربط</string>
-    <string name="pair_help">امسح كود QR من لوحة التحكم بكاميرا الجوال، أو الصق رابط الربط هون.</string>
-    <string name="pair_button">ربط</string>
+    <string name="pair_help">اضغط "مسح كود QR" ووجّه الكاميرا على الكود اللي بلوحة التحكم، أو الصق رابط الربط هون.</string>
+    <string name="pair_button">ربط بالرابط</string>
+    <string name="scan_button">📷 مسح كود QR</string>
+    <string name="scan_failed">ما زبط المسح، جرّب مرة ثانية أو الصق الرابط</string>
     <string name="pair_invalid">الرابط مش صحيح</string>
     <string name="pair_ok">تم الربط</string>
     <string name="need_pair">اربط الجوال بالسيرفر أول</string>

@@ -77,6 +77,13 @@
             android:textColor="#777777"
             android:textSize="13sp" />
 
+        <Button
+            android:id="@+id/scanBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/scan_button" />
+
         <EditText
             android:id="@+id/pairInput"
             android:layout_width="match_parent"
