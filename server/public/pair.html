@@ -3,33 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ربط الجهاز</title>
+<title>Link device</title>
+<link rel="stylesheet" href="/assets/style.css">
 <style>
-  :root { --bg:#f5f6f4; --card:#fff; --ink:#1d2320; --muted:#66706b; --accent:#0f7a5a; --accent-ink:#fff; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121614; --card:#1b201d; --ink:#e8ece9; --muted:#98a29d; --accent:#3fbf8f; --accent-ink:#0d1411; } }
-  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, Tahoma, sans-serif; display:grid; place-items:center; min-height:100vh; padding:16px; box-sizing:border-box; }
-  .card { background:var(--card); border-radius:14px; padding:24px; max-width:420px; width:100%; text-align:center; }
-  a.btn { display:block; background:var(--accent); color:var(--accent-ink); text-decoration:none; padding:14px; border-radius:10px; font-weight:700; margin:18px 0 10px; }
-  p { color:var(--muted); font-size:14px; }
+  body { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+  .card { max-width: 420px; width: 100%; text-align: center; padding: 28px; }
+  .card h1 { font-size: 22px; margin-bottom: 8px; }
+  .btn { width: 100%; margin: 18px 0 8px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <h1 style="font-size:20px">ربط هذا الجوال</h1>
-  <p>تأكد إنك منزّل تطبيق بوابة الرسائل، وبعدين اضغط الزر.</p>
-  <a id="open" class="btn" href="#">افتح التطبيق واربط</a>
-  <p id="err" hidden>الرابط ناقص. ارجع للوحة التحكم واعمل رابط جديد.</p>
+  <h1 id="title"></h1>
+  <p class="muted" id="help"></p>
+  <a id="open" class="btn lg" href="#"></a>
+  <p class="alert bad hidden" id="err"></p>
 </div>
+<script src="/assets/i18n.js"></script>
 <script>
-  const token = decodeURIComponent(location.hash.slice(1));
-  if (!token) { document.getElementById('err').hidden = false; document.getElementById('open').hidden = true; }
-  else {
+  (function () {
+    const ar = SG.getLang() === 'ar';
+    document.getElementById('title').textContent = ar ? 'ربط هذا الجوال' : 'Link this phone';
+    document.getElementById('help').textContent = ar
+      ? 'تأكد إن تطبيق بوابة الرسائل منصّب، وبعدين اضغط الزر.'
+      : 'Make sure the gateway app is installed, then tap the button.';
+    const btn = document.getElementById('open');
+    btn.textContent = ar ? 'افتح التطبيق واربط' : 'Open the app and link';
+    const token = decodeURIComponent(location.hash.slice(1));
+    if (!token) {
+      btn.classList.add('hidden');
+      const e = document.getElementById('err');
+      e.textContent = ar ? 'الرابط ناقص. ارجع للوحة التحكم واعمل رابط جديد.' : 'This link is incomplete. Create a new one from the dashboard.';
+      e.classList.remove('hidden');
+      return;
+    }
     const q = 'server=' + encodeURIComponent(location.origin) + '&token=' + encodeURIComponent(token);
-    const isAndroidChrome = /Android/i.test(navigator.userAgent);
-    document.getElementById('open').href = isAndroidChrome
+    btn.href = /Android/i.test(navigator.userAgent)
       ? 'intent://pair?' + q + '#Intent;scheme=smsgw;package=dev.smsgw.gateway;end'
       : 'smsgw://pair?' + q;
-  }
+  })();
 </script>
 </body>
 </html>

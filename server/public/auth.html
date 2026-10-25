@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  .wrap { flex: 1; display: grid; place-items: center; padding: 32px 16px; }
+  .box { width: 100%; max-width: 420px; }
+  .box h1 { font-size: 26px; margin-bottom: 4px; }
+  .box .card { padding: 26px; margin-top: 22px; }
+  .switch { text-align: center; margin-top: 18px; color: var(--ink-2); }
+  .err { display: none; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="container inner">
+    <a class="brand" href="/"><span class="mark" id="logo"></span><span class="site-name">SMS Gateway</span></a>
+    <button class="lang-btn" id="langBtn" data-i18n="lang.switch"></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="box">
+    <h1 id="title"></h1>
+    <p class="muted" id="sub" style="margin:0"></p>
+    <form class="card" id="form" novalidate>
+      <div class="alert bad err" id="err" role="alert"></div>
+      <label class="field reg"><span data-i18n="f.name"></span><input name="name" autocomplete="name" required></label>
+      <label class="field"><span data-i18n="f.email"></span><input name="email" type="email" class="ltr" autocomplete="email" required></label>
+      <label class="field reg"><span data-i18n="f.phone"></span><input name="phone" type="tel" class="ltr" autocomplete="tel"></label>
+      <label class="field"><span data-i18n="f.password"></span><input name="password" type="password" class="ltr" required>
+        <small class="muted reg" data-i18n="f.passwordHint"></small></label>
+      <button class="btn lg" style="width:100%" id="submit"></button>
+    </form>
+    <p class="switch" id="switch"></p>
+  </div>
+</div>
+
+<script src="/assets/i18n.js"></script>
+<script>
+(function () {
+  const { t, esc, api, setLang, getLang, LOGO } = SG;
+  document.getElementById('logo').innerHTML = LOGO;
+  const isRegister = location.pathname === '/register';
+  const form = document.getElementById('form');
+  let config = null;
+
+  function render() {
+    document.getElementById('title').textContent = t(isRegister ? 'auth.register' : 'auth.login');
+    document.getElementById('sub').textContent = t(isRegister ? 'auth.registerSub' : 'auth.loginSub');
+    document.getElementById('submit').textContent = t(isRegister ? 'auth.register' : 'auth.login');
+    document.title = t(isRegister ? 'auth.register' : 'auth.login');
+    form.querySelectorAll('.reg').forEach((el) => el.classList.toggle('hidden', !isRegister));
+    form.password.autocomplete = isRegister ? 'new-password' : 'current-password';
+    const sw = document.getElementById('switch');
+    if (isRegister) sw.innerHTML = `${esc(t('auth.hasAccount'))} <a href="/login">${esc(t('auth.login'))}</a>`;
+    else if (!config || config.allowSignup) sw.innerHTML = `${esc(t('auth.noAccount'))} <a href="/register">${esc(t('auth.register'))}</a>`;
+    else sw.textContent = '';
+    if (config) document.querySelectorAll('.site-name').forEach((el) => { el.textContent = getLang() === 'ar' ? config.siteNameAr : config.siteNameEn; });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('err');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showError('');
+    const btn = document.getElementById('submit');
+    btn.disabled = true;
+    const body = { email: form.email.value, password: form.password.value };
+    if (isRegister) Object.assign(body, { name: form.name.value, phone: form.phone.value });
+    try {
+      await api('POST', isRegister ? '/auth/register' : '/auth/login', body);
+      location.href = '/app';
+    } catch (err) {
+      showError(err.message);
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('langBtn').onclick = () => setLang(getLang() === 'ar' ? 'en' : 'ar');
+  document.addEventListener('langchange', render);
+  render();
+
+  fetch('/me', { credentials: 'same-origin' }).then((r) => { if (r.ok) location.href = '/app'; }).catch(() => {});
+  fetch('/public/config').then((r) => r.json()).then((c) => {
+    config = c;
+    if (isRegister && !c.allowSignup) {
+      form.querySelectorAll('input, button').forEach((el) => { el.disabled = true; });
+      showError(t('auth.signupClosed'));
+    }
+    render();
+  }).catch(() => {});
+})();
+</script>
+</body>
+</html>

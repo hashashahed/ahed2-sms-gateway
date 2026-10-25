@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script src="/assets/qrcode.js" defer></script>
+<style>
+  .shell { display: grid; grid-template-columns: 232px 1fr; gap: 28px; padding-top: 24px; padding-bottom: 64px; }
+  .side { position: sticky; top: 88px; align-self: start; }
+  .side a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; color: var(--ink-2); font-weight: 500; text-decoration: none; }
+  .side a:hover { background: var(--surface-2); }
+  .side a.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); border: 1px solid var(--line); }
+  .side a svg { width: 18px; height: 18px; flex: none; stroke: currentColor; }
+  .side .sep { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 18px 12px 6px; }
+  main h1 { font-size: 24px; margin-bottom: 18px; }
+  .who { color: var(--ink-2); font-size: 14px; }
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; gap: 16px; padding-top: 12px; }
+    .side { position: static; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 6px; margin: 0 -16px; padding-inline: 16px; scrollbar-width: none; }
+    .side a { white-space: nowrap; padding: 8px 12px; }
+    .side a svg { display: none; }
+    .side .sep { display: none; }
+    .who { display: none; }
+  }
+  .plan-tile { border: 1px solid var(--line); border-radius: 14px; padding: 16px; cursor: pointer; background: var(--surface); text-align: start; font: inherit; color: inherit; width: 100%; }
+  .plan-tile:hover { border-color: var(--accent); }
+  .plan-tile.sel { border: 2px solid var(--accent); padding: 15px; }
+  .plan-tile .p { font-size: 22px; font-weight: 700; margin: 6px 0 2px; }
+  .checklist li { justify-content: flex-start; }
+  .checklist .ck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 12px; flex: none; }
+  .checklist .done .ck { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .checklist .done span.t { color: var(--muted); text-decoration: line-through; }
+  #qr { background: #fff; padding: 10px; display: inline-block; border-radius: 10px; margin-top: 6px; }
+  .pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="container inner">
+    <a class="brand" href="/"><span class="mark" id="logo"></span><span class="site-name">SMS Gateway</span></a>
+    <div class="row" style="gap:8px">
+      <span class="who" id="who"></span>
+      <button class="lang-btn" id="langBtn" data-i18n="lang.switch"></button>
+      <button class="btn ghost sm" id="logoutBtn" data-i18n="logout"></button>
+    </div>
+  </div>
+</header>
+<div class="container shell">
+  <nav class="side" id="side"></nav>
+  <main id="main" aria-live="polite"></main>
+</div>
+<script src="/assets/i18n.js"></script>
+<script src="/assets/app.js"></script>
+</body>
+</html>

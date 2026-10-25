@@ -3,301 +3,275 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بوابة الرسائل</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>SMS Gateway</title>
+<meta name="description" content="SMS API: send SMS from your app through your own Android phone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
 <style>
-  :root {
-    --bg: #f5f6f4; --card: #ffffff; --ink: #1d2320; --muted: #66706b; --line: #e2e5e1;
-    --accent: #0f7a5a; --accent-ink: #ffffff; --danger: #b3261e; --warn: #9a6400; --ok: #0f7a5a;
-    --code: #eef1ee;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121614; --card: #1b201d; --ink: #e8ece9; --muted: #98a29d; --line: #2c332f;
-      --accent: #3fbf8f; --accent-ink: #0d1411; --danger: #f2827a; --warn: #e0b45a; --ok: #3fbf8f;
-      --code: #232a26;
-    }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, "Segoe UI", Tahoma, sans-serif; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 64px; }
-  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-  h1 { font-size: 22px; margin: 0; }
-  h2 { font-size: 16px; margin: 0 0 12px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
-  input, textarea, select { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
-  textarea { min-height: 80px; resize: vertical; }
-  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
-  button { font: inherit; border: 0; border-radius: 8px; padding: 9px 14px; cursor: pointer; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-  button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
-  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--line); font-weight: 500; padding: 5px 10px; }
-  button:disabled { opacity: .5; cursor: default; }
-  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .muted { color: var(--muted); font-size: 13px; }
-  .list { list-style: none; margin: 0; padding: 0; }
-  .list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
-  .list li:first-child { border-top: 0; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: var(--muted); margin-inline-end: 6px; }
-  .dot.on { background: var(--ok); }
-  code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--code); border-radius: 6px; direction: ltr; text-align: left; }
-  code { padding: 2px 6px; word-break: break-all; }
-  pre { padding: 12px; overflow-x: auto; margin: 8px 0 0; }
-  .secret { background: var(--code); border: 1px dashed var(--accent); border-radius: 8px; padding: 12px; margin-top: 12px; }
-  .secret code { display: block; padding: 6px 8px; margin: 6px 0; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: right; padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: top; }
-  th { color: var(--muted); font-weight: 500; font-size: 13px; border-top: 0; }
-  td.msg { max-width: 320px; white-space: pre-wrap; word-break: break-word; }
-  .tablewrap { overflow-x: auto; }
-  .pill { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); white-space: nowrap; }
-  .s-delivered, .s-sent { color: var(--ok); border-color: var(--ok); }
-  .s-failed { color: var(--danger); border-color: var(--danger); }
-  .s-queued, .s-dispatched, .s-accepted { color: var(--warn); border-color: var(--warn); }
-  .s-received { color: var(--accent); }
-  #qr { background: #fff; padding: 10px; display: inline-block; border-radius: 8px; margin-top: 8px; }
-  .hidden { display: none !important; }
-  .toast { position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 420px; margin: 0 auto; background: var(--ink); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-size: 14px; }
-  .ltr { direction: ltr; text-align: left; }
+  .hero { padding: 72px 0 56px; }
+  .hero .inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  @media (max-width: 900px) { .hero .inner { grid-template-columns: 1fr; } .hero { padding-top: 40px; } }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 13px; padding: 5px 12px; border-radius: 99px; }
+  .kicker i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; margin: 18px 0 16px; letter-spacing: -0.02em; }
+  .hero h1 mark { background: linear-gradient(transparent 62%, var(--signal) 62%); color: inherit; padding: 0 2px; }
+  .hero p.sub { font-size: 18px; color: var(--ink-2); max-width: 560px; margin: 0 0 26px; }
+  .hero .row { gap: 12px; }
+
+  /* phone mockup */
+  .stage { position: relative; display: grid; place-items: center; min-height: 440px; }
+  .phone { width: 250px; height: 440px; border-radius: 36px; background: var(--ink); padding: 12px; box-shadow: 0 30px 60px -20px rgba(15,26,22,.45); position: relative; }
+  .screen { background: var(--surface); border-radius: 26px; height: 100%; padding: 46px 14px 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .notch { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; border-radius: 99px; background: var(--ink); }
+  .bubble { max-width: 85%; padding: 9px 12px; border-radius: 16px; font-size: 13px; line-height: 1.5; animation: pop .5s both; }
+  .bubble.out { align-self: flex-end; background: var(--accent); color: var(--accent-ink); border-end-end-radius: 4px; }
+  .bubble.in { align-self: flex-start; background: var(--surface-2); color: var(--ink); border-end-start-radius: 4px; }
+  [dir="rtl"] .bubble.out { align-self: flex-start; border-end-end-radius: 16px; border-end-start-radius: 4px; }
+  [dir="rtl"] .bubble.in { align-self: flex-end; border-end-start-radius: 16px; border-end-end-radius: 4px; }
+  .bubble:nth-child(2) { animation-delay: .4s; } .bubble:nth-child(3) { animation-delay: 1.1s; } .bubble:nth-child(4) { animation-delay: 1.8s; }
+  .tick { font-size: 11px; opacity: .8; display: block; margin-top: 2px; }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
+  .req { position: absolute; inset-inline-start: -10px; top: 40px; background: var(--code-bg); color: var(--code-ink); font: 12px/1.6 var(--mono); padding: 12px 14px; border-radius: 12px; direction: ltr; text-align: left; box-shadow: var(--shadow); max-width: 230px; }
+  .req b { color: var(--signal); font-weight: 500; }
+  .status-chip { position: absolute; inset-inline-end: 0; bottom: 56px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 13px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; }
+  @media (max-width: 520px) { .req, .status-chip { display: none; } }
+
+  section.block { padding: 72px 0; }
+  section.block.alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .sec-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; margin-bottom: 10px; }
+  .sec-sub { color: var(--ink-2); font-size: 17px; margin: 0 0 36px; max-width: 620px; }
+  .steps { counter-reset: s; }
+  .step { position: relative; padding-top: 52px; }
+  .step::before { counter-increment: s; content: counter(s); position: absolute; top: 0; inset-inline-start: 0; width: 38px; height: 38px; border-radius: 12px; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-weight: 700; }
+  .step h3 { font-size: 18px; margin-bottom: 6px; }
+  .step p { margin: 0; color: var(--ink-2); }
+  .feat { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+  .feat .ic { width: 40px; height: 40px; border-radius: 11px; background: var(--accent-soft); display: grid; place-items: center; margin-bottom: 14px; }
+  .feat .ic svg { width: 20px; height: 20px; stroke: var(--accent); }
+  .feat h3 { font-size: 16px; margin-bottom: 4px; }
+  .feat p { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+  .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; position: relative; }
+  .plan.hot { border: 2px solid var(--accent); }
+  .plan .badge { position: absolute; top: -12px; inset-inline-start: 20px; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+  .plan h3 { font-size: 18px; }
+  .plan .price { font-size: 34px; font-weight: 700; margin: 12px 0 2px; letter-spacing: -0.02em; }
+  .plan .price small { font-size: 14px; font-weight: 500; color: var(--muted); }
+  .plan ul { list-style: none; padding: 0; margin: 16px 0 22px; flex: 1; }
+  .plan li { padding: 6px 0; display: flex; gap: 8px; font-size: 14px; color: var(--ink-2); }
+  .plan li::before { content: "✓"; color: var(--accent); font-weight: 700; }
+  .plan .btn { width: 100%; }
+
+  .codewrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 40px; align-items: center; }
+  @media (max-width: 900px) { .codewrap { grid-template-columns: 1fr; } }
+  details.faq { border-bottom: 1px solid var(--line); padding: 16px 0; }
+  details.faq summary { cursor: pointer; font-weight: 600; font-size: 16px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  details.faq summary::after { content: "+"; color: var(--accent); font-size: 20px; line-height: 1; }
+  details.faq[open] summary::after { content: "−"; }
+  details.faq p { margin: 10px 0 0; color: var(--ink-2); }
+  .cta { background: var(--ink); color: var(--bg); border-radius: 24px; padding: 48px 32px; text-align: center; }
+  .cta h2 { font-size: clamp(24px, 3vw, 32px); margin-bottom: 20px; }
+  footer { padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>بوابة الرسائل</h1>
-    <button id="logout" class="ghost hidden">خروج</button>
-  </header>
+<header class="topbar">
+  <div class="container inner">
+    <a class="brand" href="/"><span class="mark" id="logo"></span><span class="site-name">SMS Gateway</span></a>
+    <nav class="nav">
+      <a class="link" href="#features" data-i18n="nav.features"></a>
+      <a class="link" href="#pricing" data-i18n="nav.pricing"></a>
+      <a class="link" href="#api" data-i18n="nav.docs"></a>
+      <a class="link" href="#faq" data-i18n="nav.faq"></a>
+      <button class="lang-btn" id="langBtn" data-i18n="lang.switch"></button>
+      <a class="btn ghost sm" href="/login" id="loginLink" data-i18n="nav.login"></a>
+      <a class="btn sm" href="/register" id="ctaLink" data-i18n="nav.register"></a>
+    </nav>
+  </div>
+</header>
 
-  <section id="login" class="card" style="max-width:440px">
-    <h2>تسجيل الدخول</h2>
-    <p class="muted">أدخل مفتاح الإدارة اللي ظهر في سجل السيرفر عند التشغيل (أو قيمة ADMIN_KEY).</p>
-    <input id="adminKey" class="ltr" placeholder="admin_..." autocomplete="current-password">
-    <div class="row" style="margin-top:12px"><button id="loginBtn">دخول</button></div>
+<main>
+  <section class="hero">
+    <div class="container inner">
+      <div>
+        <span class="kicker"><i></i><span data-i18n="hero.kicker"></span></span>
+        <h1 id="heroTitle"></h1>
+        <p class="sub" data-i18n="hero.sub"></p>
+        <div class="row">
+          <a class="btn lg" href="/register" data-i18n="hero.cta"></a>
+          <a class="btn lg ghost" href="#pricing" data-i18n="hero.cta2"></a>
+        </div>
+        <p class="muted small" style="margin-top:14px" data-i18n="hero.note"></p>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="req"><b>POST</b> /api/v1/sms/send<br>{"to": "0599…",<br>&nbsp;"message": "…"}</div>
+        <div class="phone"><div class="notch"></div>
+          <div class="screen" id="screen"></div>
+        </div>
+        <div class="status-chip"><span class="dot on"></span><span id="chipText"></span></div>
+      </div>
+    </div>
   </section>
 
-  <main id="app" class="hidden">
-    <div class="grid">
-      <section class="card">
-        <div class="row" style="justify-content:space-between"><h2>الأجهزة</h2><button id="addDevice" class="ghost">+ ربط جهاز</button></div>
-        <ul id="devices" class="list"></ul>
-        <div id="pairBox" class="secret hidden">
-          <strong>ربط الجهاز</strong>
-          <p class="muted" style="margin:4px 0">امسح الكود بكاميرا الجوال، أو انسخ الرابط والصقه في التطبيق. الرابط بيظهر مرة وحدة بس.</p>
-          <div id="qr"></div>
-          <code id="pairLink"></code>
-          <button id="copyPair" class="ghost">نسخ الرابط</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="row" style="justify-content:space-between"><h2>مفاتيح API</h2><button id="addKey" class="ghost">+ مفتاح جديد</button></div>
-        <ul id="keys" class="list"></ul>
-        <div id="keyBox" class="secret hidden">
-          <strong>مفتاحك الجديد</strong>
-          <p class="muted" style="margin:4px 0">احفظه هلأ، ما رح يظهر مرة ثانية.</p>
-          <code id="newKey"></code>
-          <button id="copyKey" class="ghost">نسخ</button>
-        </div>
-      </section>
+  <section class="block alt" id="how">
+    <div class="container">
+      <h2 class="sec-title" data-i18n="how.title"></h2>
+      <div class="grid-3 steps" style="margin-top:32px">
+        <div class="step"><h3 data-i18n="how.1.t"></h3><p data-i18n="how.1.d"></p></div>
+        <div class="step"><h3 data-i18n="how.2.t"></h3><p data-i18n="how.2.d"></p></div>
+        <div class="step"><h3 data-i18n="how.3.t"></h3><p data-i18n="how.3.d"></p></div>
+      </div>
     </div>
+  </section>
 
-    <section class="card">
-      <h2>إرسال رسالة تجريبية</h2>
-      <div class="grid">
-        <div>
-          <label>الرقم (أو أكثر من رقم مفصولين بفاصلة)</label>
-          <input id="to" class="ltr" placeholder="+970599000000">
-          <div class="row" style="gap:12px">
-            <div style="flex:1"><label>الجهاز</label><select id="deviceSel"></select></div>
-            <div style="flex:1"><label>الشريحة</label>
-              <select id="simSel"><option value="">الافتراضية</option><option value="0">شريحة 1</option><option value="1">شريحة 2</option></select>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label>نص الرسالة</label>
-          <textarea id="body" placeholder="مرحبا!"></textarea>
-        </div>
+  <section class="block" id="features">
+    <div class="container">
+      <h2 class="sec-title" data-i18n="feat.title"></h2>
+      <div class="grid-3" style="margin-top:32px" id="feats"></div>
+    </div>
+  </section>
+
+  <section class="block alt" id="pricing">
+    <div class="container">
+      <h2 class="sec-title" data-i18n="pricing.title"></h2>
+      <p class="sec-sub" data-i18n="pricing.sub"></p>
+      <div class="plans" id="plans"></div>
+    </div>
+  </section>
+
+  <section class="block" id="api">
+    <div class="container codewrap">
+      <div>
+        <h2 class="sec-title" data-i18n="code.title"></h2>
+        <p class="sec-sub" style="margin-bottom:0" data-i18n="code.sub"></p>
       </div>
-      <div class="row" style="margin-top:12px"><button id="sendBtn">إرسال</button><span id="sendInfo" class="muted"></span></div>
-    </section>
+      <pre class="code" id="codeSample"></pre>
+    </div>
+  </section>
 
-    <section class="card">
-      <div class="row" style="justify-content:space-between">
-        <h2>الرسائل</h2>
-        <select id="dirSel" style="width:auto"><option value="">الكل</option><option value="out">الصادرة</option><option value="in">الواردة</option></select>
+  <section class="block alt" id="faq">
+    <div class="container" style="max-width:780px">
+      <h2 class="sec-title" data-i18n="faq.title"></h2>
+      <div id="faqs" style="margin-top:20px"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <div class="cta">
+        <h2 data-i18n="cta.title"></h2>
+        <a class="btn lg signal" href="/register" data-i18n="cta.btn"></a>
       </div>
-      <div class="tablewrap">
-        <table>
-          <thead><tr><th></th><th>الرقم</th><th>الرسالة</th><th>الحالة</th><th>الوقت</th></tr></thead>
-          <tbody id="msgs"></tbody>
-        </table>
-      </div>
-    </section>
+    </div>
+  </section>
+</main>
 
-    <section class="card">
-      <h2>استخدام الـ API</h2>
-      <p class="muted">أرسل رسالة:</p>
-      <pre id="curlSend"></pre>
-      <p class="muted" style="margin-top:14px">استعلم عن حالة رسالة (queued → dispatched → accepted → sent → delivered، أو failed):</p>
-      <pre id="curlStatus"></pre>
-      <p class="muted" style="margin-top:14px">حقول اختيارية في الإرسال: <code>deviceId</code> لاختيار جهاز معين، <code>simSlot</code> = 0 أو 1 للجوالات ثنائية الشريحة. <code>to</code> بيقبل رقم أو مصفوفة لغاية 100 رقم.</p>
-    </section>
-  </main>
-</div>
-<div id="toast" class="toast hidden"></div>
+<footer>
+  <div class="container row between">
+    <span>© <span id="year"></span> <span class="site-name"></span> · <span data-i18n="footer.rights"></span></span>
+    <a id="waLink" class="hidden" target="_blank" rel="noopener" data-i18n="footer.contact"></a>
+  </div>
+</footer>
 
+<script src="/assets/i18n.js"></script>
 <script>
-const $ = (id) => document.getElementById(id);
-const store = {
-  get() { try { return localStorage.getItem('adminKey') || ''; } catch { return ''; } },
-  set(v) { try { v ? localStorage.setItem('adminKey', v) : localStorage.removeItem('adminKey'); } catch {} },
-};
-let adminKey = store.get();
-let devices = [];
+(function () {
+  const { t, esc, setLang, getLang, fmtNum, fmtMoney, LOGO } = SG;
+  document.getElementById('logo').innerHTML = LOGO;
+  document.getElementById('year').textContent = new Date().getFullYear();
+  let config = null;
 
-function toast(t) {
-  const el = $('toast'); el.textContent = t; el.classList.remove('hidden');
-  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.add('hidden'), 3500);
-}
-async function api(method, path, body) {
-  const r = await fetch(path, {
-    method, headers: { 'x-admin-key': adminKey, ...(body ? { 'content-type': 'application/json' } : {}) },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await r.json().catch(() => ({}));
-  if (r.status === 401) { logout(); throw new Error('مفتاح الإدارة غير صحيح'); }
-  if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
-  return data;
-}
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const when = (t) => t ? new Date(t).toLocaleString('ar', { dateStyle: 'short', timeStyle: 'short' }) : '—';
-const STATUS = { queued: 'بالانتظار', dispatched: 'أُرسلت للجهاز', accepted: 'الجهاز استلمها', sent: 'انبعتت', delivered: 'وصلت', failed: 'فشلت', received: 'واردة' };
+  const ICONS = [
+    '<path d="M4 7h16M4 12h10M4 17h7"/>',
+    '<path d="M4 12l5 5L20 6"/>',
+    '<path d="M21 12a8 8 0 1 1-3-6.2M21 4v5h-5"/>',
+    '<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 8h4M10 12h4"/>',
+    '<path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/>',
+    '<path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/>',
+  ];
 
-function logout() { adminKey = ''; store.set(''); show(false); }
-function show(loggedIn) {
-  $('login').classList.toggle('hidden', loggedIn);
-  $('app').classList.toggle('hidden', !loggedIn);
-  $('logout').classList.toggle('hidden', !loggedIn);
-}
+  function render() {
+    const name = config ? (getLang() === 'ar' ? config.siteNameAr : config.siteNameEn) : 'SMS Gateway';
+    document.querySelectorAll('.site-name').forEach((el) => { el.textContent = name; });
+    document.title = name + ' · SMS API';
 
-async function loadOverview() {
-  const o = await api('GET', '/admin/overview');
-  devices = o.devices;
-  $('devices').innerHTML = devices.length ? devices.map((d) => `
-    <li>
-      <div><span class="dot ${d.online ? 'on' : ''}"></span><strong>${esc(d.name)}</strong>
-        <div class="muted">${d.online ? 'متصل' : 'آخر ظهور: ' + when(d.lastSeen)}${d.info?.model ? ' · ' + esc(d.info.model) : ''} · <code>${esc(d.id)}</code></div></div>
-      <div class="row"><button class="ghost" data-repair="${esc(d.id)}">رابط جديد</button><button class="danger" data-deldev="${esc(d.id)}">حذف</button></div>
-    </li>`).join('') : '<li class="muted">ما في أجهزة لسا. اضغط "ربط جهاز".</li>';
+    const title = t('hero.title');
+    const word = getLang() === 'ar' ? 'جوالك' : 'your own phone';
+    document.getElementById('heroTitle').innerHTML = esc(title).replace(esc(word), `<mark>${esc(word)}</mark>`);
 
-  $('keys').innerHTML = o.apiKeys.length ? o.apiKeys.map((k) => `
-    <li><div><strong>${esc(k.name)}</strong><div class="muted"><code>${esc(k.prefix)}…</code> · آخر استخدام: ${when(k.last_used)}</div></div>
-      <button class="danger" data-delkey="${esc(k.id)}">حذف</button></li>`).join('')
-    : '<li class="muted">ما في مفاتيح. أنشئ مفتاح عشان تستخدم الـ API من برامجك.</li>';
+    const ar = getLang() === 'ar';
+    document.getElementById('screen').innerHTML = `
+      <div class="muted small" style="text-align:center">${ar ? 'اليوم' : 'Today'}</div>
+      <div class="bubble out">${ar ? 'طلبك رقم 1042 جاهز للاستلام 📦' : 'Your order #1042 is ready for pickup 📦'}<span class="tick">✓✓</span></div>
+      <div class="bubble out">${ar ? 'رمز التحقق: 482913' : 'Verification code: 482913'}<span class="tick">✓✓</span></div>
+      <div class="bubble in">${ar ? 'شكراً، جاي بعد ساعة' : 'Thanks, coming in an hour'}</div>`;
+    document.getElementById('chipText').textContent = ar ? 'وصلت · 2.1 ث' : 'Delivered · 2.1s';
 
-  const sel = $('deviceSel'); const cur = sel.value;
-  sel.innerHTML = '<option value="">تلقائي (أول جهاز متصل)</option>' +
-    devices.map((d) => `<option value="${esc(d.id)}">${esc(d.name)}${d.online ? '' : ' (غير متصل)'}</option>`).join('');
-  sel.value = cur;
-}
+    document.getElementById('feats').innerHTML = [1, 2, 3, 4, 5, 6].map((i) => `
+      <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[i - 1]}</svg></div>
+      <h3>${esc(t(`feat.${i}.t`))}</h3><p>${esc(t(`feat.${i}.d`))}</p></div>`).join('');
 
-async function loadMessages() {
-  const dir = $('dirSel').value;
-  const { messages } = await api('GET', '/api/v1/sms?limit=50' + (dir ? '&direction=' + dir : ''));
-  $('msgs').innerHTML = messages.length ? messages.map((m) => `
-    <tr>
-      <td>${m.direction === 'in' ? '⬇' : '⬆'}</td>
-      <td class="ltr"><code>${esc(m.phone)}</code></td>
-      <td class="msg">${esc(m.message)}${m.error ? `<div class="muted" style="color:var(--danger)">${esc(m.error)}</div>` : ''}</td>
-      <td><span class="pill s-${esc(m.status)}">${esc(STATUS[m.status] || m.status)}</span></td>
-      <td class="muted">${when(m.createdAt)}</td>
-    </tr>`).join('') : '<tr><td colspan="5" class="muted">ما في رسائل لسا.</td></tr>';
-}
+    document.getElementById('faqs').innerHTML = [1, 2, 3, 4].map((i) => `
+      <details class="faq"><summary>${esc(t(`faq.${i}.q`))}</summary><p>${esc(t(`faq.${i}.a`))}</p></details>`).join('');
 
-async function refresh() {
-  if (!adminKey) return;
-  try { await Promise.all([loadOverview(), loadMessages()]); } catch (e) { toast(e.message); }
-}
-
-function showPair(token) {
-  const link = `${location.origin}/pair#${token}`;
-  $('pairBox').classList.remove('hidden');
-  $('pairLink').textContent = link;
-  $('qr').innerHTML = '';
-  if (window.QRCode) new QRCode($('qr'), { text: link, width: 200, height: 200 });
-  else $('qr').classList.add('hidden');
-}
-
-function renderDocs() {
-  const base = location.origin;
-  $('curlSend').textContent =
-`curl -X POST ${base}/api/v1/sms/send \\
-  -H "x-api-key: YOUR_API_KEY" \\
+    document.getElementById('codeSample').textContent =
+`curl -X POST ${location.origin}/api/v1/sms/send \\
+  -H "x-api-key: sk_..." \\
   -H "content-type: application/json" \\
-  -d '{"to": "+970599000000", "message": "مرحبا من الـ API"}'`;
-  $('curlStatus').textContent =
-`curl ${base}/api/v1/sms/MESSAGE_ID -H "x-api-key: YOUR_API_KEY"`;
-}
+  -d '{"to": "+970599000000", "message": "${ar ? 'مرحبا!' : 'Hello!'}"}'`;
 
-$('loginBtn').onclick = async () => {
-  adminKey = $('adminKey').value.trim();
-  try { await api('GET', '/admin/overview'); store.set(adminKey); show(true); refresh(); }
-  catch (e) { toast(e.message); }
-};
-$('adminKey').onkeydown = (e) => { if (e.key === 'Enter') $('loginBtn').click(); };
-$('logout').onclick = logout;
+    renderPlans();
+  }
 
-$('addDevice').onclick = async () => {
-  const name = prompt('اسم الجهاز:', 'جوالي');
-  if (name === null) return;
-  try { const d = await api('POST', '/admin/devices', { name }); showPair(d.token); refresh(); }
-  catch (e) { toast(e.message); }
-};
-$('addKey').onclick = async () => {
-  const name = prompt('اسم المفتاح (مثلاً اسم موقعك):', 'my-app');
-  if (name === null) return;
-  try {
-    const k = await api('POST', '/admin/keys', { name });
-    $('keyBox').classList.remove('hidden'); $('newKey').textContent = k.key; refresh();
-  } catch (e) { toast(e.message); }
-};
+  function renderPlans() {
+    const el = document.getElementById('plans');
+    if (!config) { el.innerHTML = ''; return; }
+    const ar = getLang() === 'ar';
+    const paid = config.plans.filter((p) => p.price > 0);
+    const hot = paid.length >= 2 ? paid[Math.floor((paid.length - 1) / 2)].id : null;
+    el.innerHTML = config.plans.map((p) => {
+      const feats = (ar ? p.featuresAr : p.featuresEn).split('\n').map((s) => s.trim()).filter(Boolean);
+      const lines = [
+        p.monthlyLimit === null ? t('pricing.unlimited') : t('pricing.msgs', { n: fmtNum(p.monthlyLimit) }),
+        p.maxDevices === 1 ? t('pricing.devices1') : t('pricing.devicesN', { n: fmtNum(p.maxDevices) }),
+        ...feats.filter((f) => !/device|جهاز|أجهزة|unlimited|بلا حد/i.test(f)),
+      ];
+      return `<div class="plan ${p.id === hot ? 'hot' : ''}">
+        ${p.id === hot ? `<span class="badge">${esc(t('pricing.popular'))}</span>` : ''}
+        <h3>${esc(ar ? p.nameAr : p.nameEn)}</h3>
+        <div class="price">${p.price > 0 ? esc(fmtMoney(p.price, p.currency)) + ` <small>${esc(t('pricing.month'))}</small>` : esc(t('pricing.free'))}</div>
+        <ul>${lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>
+        <a class="btn ${p.id === hot ? '' : 'ghost'}" href="/register">${esc(t('pricing.choose'))}</a>
+      </div>`;
+    }).join('');
+  }
 
-document.addEventListener('click', async (e) => {
-  const t = e.target.closest('button'); if (!t) return;
-  try {
-    if (t.dataset.deldev && confirm('حذف الجهاز؟ رح ينفصل فوراً.')) { await api('DELETE', '/admin/devices/' + t.dataset.deldev); refresh(); }
-    if (t.dataset.delkey && confirm('حذف المفتاح؟ أي برنامج بيستخدمه رح يوقف.')) { await api('DELETE', '/admin/keys/' + t.dataset.delkey); refresh(); }
-    if (t.dataset.repair && confirm('إنشاء رابط ربط جديد؟ الرابط القديم رح يبطل.')) {
-      const r = await api('POST', `/admin/devices/${t.dataset.repair}/token`); showPair(r.token); refresh();
+  document.getElementById('langBtn').onclick = () => setLang(getLang() === 'ar' ? 'en' : 'ar');
+  document.addEventListener('langchange', render);
+  render();
+
+  fetch('/public/config').then((r) => r.json()).then((c) => {
+    config = c;
+    if (c.contactWhatsapp) {
+      const a = document.getElementById('waLink');
+      a.href = 'https://wa.me/' + c.contactWhatsapp.replace(/[^0-9]/g, '');
+      a.classList.remove('hidden');
     }
-  } catch (err) { toast(err.message); }
-});
+    if (!c.allowSignup) document.querySelectorAll('a[href="/register"]').forEach((a) => { a.href = '/login'; });
+    render();
+  }).catch(() => {});
 
-const copy = (id) => navigator.clipboard?.writeText($(id).textContent).then(() => toast('انسخ ✓'), () => toast('ما زبط النسخ، انسخه يدوياً'));
-$('copyPair').onclick = () => copy('pairLink');
-$('copyKey').onclick = () => copy('newKey');
-$('dirSel').onchange = () => loadMessages().catch((e) => toast(e.message));
-
-$('sendBtn').onclick = async () => {
-  const to = $('to').value.split(/[,،\n]/).map((s) => s.trim()).filter(Boolean);
-  const body = { to, message: $('body').value };
-  if ($('deviceSel').value) body.deviceId = $('deviceSel').value;
-  if ($('simSel').value !== '') body.simSlot = Number($('simSel').value);
-  $('sendBtn').disabled = true;
-  try {
-    const r = await api('POST', '/api/v1/sms/send', body);
-    $('sendInfo').textContent = r.deviceOnline ? `انضافت ${r.messages.length} رسالة وانبعتت للجهاز` : 'الجهاز مش متصل، الرسالة بتنتظر لحد ما يتصل';
-    $('body').value = '';
-    loadMessages();
-  } catch (e) { toast(e.message); }
-  finally { $('sendBtn').disabled = false; }
-};
-
-renderDocs();
-if (adminKey) { show(true); refresh(); }
-setInterval(refresh, 5000);
+  // Signed-in visitors get a link straight to their dashboard.
+  fetch('/me', { credentials: 'same-origin' }).then((r) => {
+    if (!r.ok) return;
+    const l = document.getElementById('loginLink'); l.classList.add('hidden');
+    const c = document.getElementById('ctaLink'); c.href = '/app'; c.dataset.i18n = 'nav.dashboard'; c.textContent = t('nav.dashboard');
+  }).catch(() => {});
+})();
 </script>
 </body>
 </html>
